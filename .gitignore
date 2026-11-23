@@ -1,0 +1,11 @@
+venv/
+__pycache__/
+*.pyc
+.env
+data/*
+!data/.gitkeep
+models/*
+!models/.gitkeep
+outputs/
+training/metrics.json
+.ipynb_checkpoints/

@@ -1,0 +1,11 @@
+numpy
+pillow
+opencv-python-headless
+pytesseract
+easyocr
+jiwer
+torch
+transformers
+fastapi
+uvicorn[standard]
+python-multipart

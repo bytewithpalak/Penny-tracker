@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Penny Petal: a receipt scanner and expense calendar</title>
+<meta name="description" content="Photograph a receipt and it lands on the right day of your calendar. Monthly and yearly spending, budgets, and separate personal and business profiles.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#a9d3e6;--pink:#f58ba6;--pinkd:#d9507a;--tint:#fde4ec;--teal:#2c9fc4;--ink:#14141a;--muted:#5f6b7a;--band:#f4f8fb;--line:#f5b9ca;--font:"Montserrat","Segoe UI",system-ui,sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--font);color:var(--ink);background:linear-gradient(170deg,#9ccbe1,#6aa5c2 60%,#8fbfd6);padding:1rem;line-height:1.55}
+a{color:inherit}button{font:inherit;cursor:pointer}:focus-visible{outline:3px solid var(--pinkd);outline-offset:3px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:1.2rem}
+.card{background:#fff;border-radius:34px;box-shadow:0 26px 54px rgba(15,55,85,.26);padding:clamp(1.4rem,4vw,3.2rem)}
+h1,h2,h3{margin:0;line-height:1.05;letter-spacing:-.025em;font-weight:800}
+h2{font-size:clamp(1.9rem,4vw,2.8rem);margin-bottom:.7rem}
+.eyebrow{margin:0 0 .8rem;font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--teal)}
+.lead{font-size:1.1rem;color:var(--muted);max-width:52ch;margin:.9rem 0 0}
+.go{display:inline-flex;align-items:center;gap:.9rem;border:0;border-radius:999px;background:var(--ink);color:#fff;padding:.4rem 1.4rem .4rem .4rem;font-weight:600;text-decoration:none}
+.go i{width:2.4rem;height:2.4rem;border-radius:50%;background:var(--teal);display:grid;place-items:center;font-style:normal}
+.pill{display:inline-block;border-radius:999px;background:var(--band);padding:.8rem 1.4rem;font-weight:700;text-decoration:none}
+.nav{position:sticky;top:.6rem;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:1rem;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-radius:999px;padding:.6rem .7rem .6rem 1.6rem;box-shadow:0 12px 30px rgba(15,55,85,.18)}
+.logo{font-weight:800;font-size:1.1rem;line-height:1;text-decoration:none}.logo b{color:var(--teal)}
+.nav nav{display:flex;gap:1.4rem;font-weight:600;font-size:.92rem}.nav nav a{text-decoration:none;color:var(--muted)}.nav nav a:hover{color:var(--ink)}
+.nav .r{display:flex;align-items:center;gap:1rem;font-weight:600;font-size:.92rem}
+@media(max-width:860px){.nav nav{display:none}}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.05fr 1fr;gap:1rem;align-items:center;padding:0;overflow:hidden}
+.cut{position:relative;min-height:560px;margin:1.2rem 0 1.2rem 1.2rem}
+.cut::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 25% 25%,#e8f4fa 0 14%,transparent 15%),radial-gradient(circle at 70% 80%,#d5ebf5 0 18%,transparent 19%),var(--sky);border-radius:60px 200px 200px 60px / 60px 260px 200px 60px}
+.sticker{position:absolute;left:50%;top:50%;width:min(540px,118%);transform:translate(-44%,-50%) rotate(-4deg);filter:drop-shadow(0 22px 24px rgba(20,60,90,.28));animation:bob 5s ease-in-out infinite}
+@keyframes bob{50%{transform:translate(-44%,-53%) rotate(-2deg)}}
+@media(prefers-reduced-motion:reduce){.sticker{animation:none}}
+.copy{padding:2rem clamp(1.2rem,4vw,3.4rem) 2rem 1rem}
+.copy h1{font-size:clamp(2.4rem,5.4vw,4.1rem)}.copy h1 em{font-style:normal;color:var(--teal)}
+.ctas{display:flex;gap:.9rem;flex-wrap:wrap;margin-top:1.8rem;align-items:center}
+.chips{list-style:none;margin:2rem 0 0;padding:0;display:flex;gap:.6rem;flex-wrap:wrap}
+.chips li{background:var(--tint);border-radius:999px;padding:.45rem 1rem;font-weight:700;font-size:.85rem;color:var(--pinkd)}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.cut{min-height:400px;margin:1rem 1rem 0}.sticker{width:min(400px,100%)}.copy{padding:1.5rem}}
+
+/* steps + features */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.6rem;counter-reset:s}
+.step{background:var(--band);border-radius:26px;padding:1.5rem;counter-increment:s}
+.step::before{content:"0" counter(s);display:block;font-size:2.8rem;font-weight:800;color:var(--pink);letter-spacing:-.04em;line-height:1;margin-bottom:.8rem}
+.step h3{font-size:1.25rem;margin-bottom:.4rem}.step p,.feat p{margin:0;color:var(--muted);font-size:.95rem}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.6rem}
+.feat{border:2px solid var(--tint);border-radius:26px;padding:1.5rem}
+.feat span{display:grid;place-items:center;width:2.8rem;height:2.8rem;border-radius:50%;background:var(--teal);color:#fff;font-size:1.2rem;margin-bottom:1rem}
+.feat h3{font-size:1.15rem;margin-bottom:.4rem}
+@media(max-width:860px){.steps,.grid3{grid-template-columns:1fr}}
+
+/* demos */
+.split{display:grid;grid-template-columns:1fr 1.25fr;gap:2.2rem;align-items:center}
+@media(max-width:900px){.split{grid-template-columns:1fr}}
+.demo-note{font-size:.78rem;color:var(--muted);margin:.7rem 0 0}
+.mbar{display:flex;align-items:center;gap:.8rem;margin-bottom:.8rem}.mbar b{font-size:1.3rem;margin-right:auto}
+.mbar button{width:2.4rem;height:2.4rem;border-radius:50%;border:0;background:var(--band);font-size:1.1rem}
+.cal{border:3px solid var(--pink);border-radius:22px;overflow:hidden}
+.dow,.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.dow div{background:var(--pink);color:#fff;text-align:center;font-weight:800;font-size:.66rem;padding:.45rem 0;letter-spacing:.08em}
+.cell{min-height:70px;padding:.25rem .3rem;border-right:2px solid var(--line);border-bottom:2px solid var(--line);display:flex;flex-direction:column;gap:2px;min-width:0}
+.cell:nth-child(7n){border-right:0}.cell.has{background:var(--tint)}.cell.off .n{color:#e6c3cf}
+.n{font-weight:800;font-size:.85rem}.cell .a{margin-top:auto;font-size:.66rem;font-weight:800;color:var(--pinkd);text-align:right}
+.cell .m{font-size:.58rem;font-weight:700;background:#fff;border-radius:5px;padding:0 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.yb{display:flex;align-items:flex-end;gap:6px;height:230px;margin-top:1rem}
+.yb div{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;font-size:.66rem;font-weight:700;color:var(--muted)}
+.yb i{display:block;width:100%;background:var(--pink);border-radius:8px 8px 0 0;min-height:4px}.yb .top i{background:var(--teal)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-top:1.4rem}
+.kpis div{background:var(--band);border-radius:20px;padding:1rem}.kpis small{display:block;color:var(--muted);font-weight:600;font-size:.75rem}.kpis b{font-size:1.25rem}
+@media(max-width:560px){.kpis{grid-template-columns:1fr}}
+
+/* privacy, faq, cta */
+.facts{list-style:none;padding:0;margin:1.2rem 0 0;display:grid;gap:.7rem}
+.facts li{background:var(--band);border-radius:18px;padding:1rem 1.2rem}.facts b{display:block}
+.facts span{color:var(--muted);font-size:.92rem}
+details{border-bottom:2px solid var(--tint);padding:1rem 0}details:last-of-type{border-bottom:0}
+summary{cursor:pointer;font-weight:700;font-size:1.05rem;list-style:none;display:flex;justify-content:space-between;gap:1rem}
+summary::after{content:"+";color:var(--teal);font-size:1.4rem;line-height:1}details[open] summary::after{content:"\2212"}
+details p{margin:.6rem 0 0;color:var(--muted);max-width:70ch}
+.cta{display:grid;grid-template-columns:1fr auto;align-items:center;gap:1rem;background:var(--sky)}
+.cta img{width:220px;height:auto;margin:-2.5rem 0}
+@media(max-width:700px){.cta{grid-template-columns:1fr}.cta img{display:none}}
+footer{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;color:#fff;font-size:.88rem;padding:.4rem 1rem 1rem}
+footer a{opacity:.9}
+</style>
+</head>
+<body>
+<div class="wrap" id="top">
+
+<header class="nav">
+  <a class="logo" href="#top">penny<br><b>petal.</b></a>
+  <nav aria-label="Sections"><a href="#how">How it works</a><a href="#features">Features</a><a href="#calendar">Calendar</a><a href="#year">Yearly view</a><a href="#privacy">Privacy</a><a href="#faq">FAQ</a></nav>
+  <div class="r"><a href="/app">Log in</a><a class="go" href="/app"><i>&rarr;</i>Get started</a></div>
+</header>
+
+<section class="card hero" aria-labelledby="h1">
+  <div class="cut"><img class="sticker" src="/static/sticker.png" alt="A smiling red panda coffee cup"></div>
+  <div class="copy">
+    <p class="eyebrow">Receipt scanner and expense calendar</p>
+    <h1 id="h1">Every receipt lands on <em>the right day.</em></h1>
+    <p class="lead">Take a photo of a bill and Penny Petal reads the shop, the date and the total, then pins it to your calendar. Scroll through any month, or zoom out and see the whole year.</p>
+    <div class="ctas"><a class="go" href="/app"><i>&rarr;</i>Start tracking</a><a class="pill" href="#how">See how it works</a></div>
+    <ul class="chips"><li>Scan or type</li><li>Personal and business</li><li>Monthly and yearly totals</li></ul>
+  </div>
+</section>
+
+<section class="card" id="how" aria-labelledby="h-how">
+  <p class="eyebrow">How it works</p><h2 id="h-how">From a crumpled receipt to a clear month, in three steps</h2>
+  <div class="steps">
+    <div class="step"><h3>Snap it</h3><p>Upload a photo of any printed receipt. The image is straightened and cleaned, then the text is read on the server.</p></div>
+    <div class="step"><h3>Check it</h3><p>The shop, date, total and a likely category are filled in for you. Fix anything that looks off, then save.</p></div>
+    <div class="step"><h3>See it</h3><p>The expense appears on its day. Your month total, budget and what you have saved update straight away.</p></div>
+  </div>
+</section>
+
+<section class="card" id="features" aria-labelledby="h-feat">
+  <p class="eyebrow">Features</p><h2 id="h-feat">Everything for your spending, in one calm place</h2>
+  <div class="grid3">
+    <div class="feat"><span aria-hidden="true">&#9673;</span><h3>Receipt scanning</h3><p>A trained text-reading model turns photos into amounts, dates and shop names, so you type less.</p></div>
+    <div class="feat"><span aria-hidden="true">&#9638;</span><h3>A calendar that adds up</h3><p>Each day shows where you spent and how much, with a running total for the month.</p></div>
+    <div class="feat"><span aria-hidden="true">&#8644;</span><h3>Two profiles, one you</h3><p>Keep personal and business spending apart and switch between them with one tap.</p></div>
+    <div class="feat"><span aria-hidden="true">&#9716;</span><h3>Budgets and savings</h3><p>Set a monthly budget and see how much is left, how much you saved, and how you compare with last month.</p></div>
+    <div class="feat"><span aria-hidden="true">&#9636;</span><h3>Monthly and yearly insights</h3><p>Category breakdowns, a six-month trend, your biggest day, and a full-year view with every month side by side.</p></div>
+    <div class="feat"><span aria-hidden="true">&#8981;</span><h3>Search and export</h3><p>Find any expense by shop, note or even words on the receipt, and download a month as a CSV file.</p></div>
+  </div>
+</section>
+
+<section class="card split" id="calendar" aria-labelledby="h-cal">
+  <div><p class="eyebrow">Calendar</p><h2 id="h-cal">Scroll through your months like a diary</h2>
+    <p class="lead">Move month to month, jump straight to any month from a scrollable strip, and open a day to see every expense on it. Days with spending are tinted so busy weeks stand out.</p>
+    <p class="demo-note">The calendar on the right uses sample amounts. Try the arrows.</p></div>
+  <div>
+    <div class="mbar"><b id="dMonth"></b><button id="dPrev" type="button" aria-label="Previous month">&lsaquo;</button><button id="dNext" type="button" aria-label="Next month">&rsaquo;</button></div>
+    <div class="cal"><div class="dow"><div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div></div><div class="grid" id="dGrid"></div></div>
+  </div>
+</section>
+
+<section class="card split" id="year" aria-labelledby="h-year">
+  <div><p class="eyebrow">Yearly view</p><h2 id="h-year">Zoom out to see the whole year</h2>
+    <p class="lead">Twelve months side by side, with your yearly total, monthly average and most expensive month. Tap a month to open its calendar.</p>
+    <p class="demo-note">Sample data.</p></div>
+  <div><div class="yb" id="yBars" role="img" aria-label="Sample bar chart of twelve months of spending"></div>
+    <div class="kpis"><div><small>Year total</small><b id="kT"></b></div><div><small>Monthly average</small><b id="kA"></b></div><div><small>Highest month</small><b id="kH"></b></div></div></div>
+</section>
+
+<section class="card split" id="privacy" aria-labelledby="h-priv">
+  <div><p class="eyebrow">Privacy</p><h2 id="h-priv">Your receipts stay with you</h2>
+    <p class="lead">Receipts are read by models running on the same server as the app, not sent to an outside text-reading service.</p></div>
+  <ul class="facts">
+    <li><b>Private accounts</b><span>Every account sees only its own expenses, budgets and receipts.</span></li>
+    <li><b>Passwords are never stored as plain text</b><span>They are salted and hashed, and sessions expire after 14 days.</span></li>
+    <li><b>Yours to take with you</b><span>Export any month as a CSV file, and delete any expense whenever you like.</span></li>
+  </ul>
+</section>
+
+<section class="card" id="faq" aria-labelledby="h-faq">
+  <p class="eyebrow">Questions</p><h2 id="h-faq">Good to know</h2>
+  <details><summary>What kind of receipts work best?</summary><p>Printed receipts photographed flat, in good light and straight on. Handwriting, heavy folds and glare are harder to read, so always check the details before saving.</p></details>
+  <details><summary>What if it reads something wrong?</summary><p>You always see the details first. Change the shop, amount, date or category, then save. Nothing is added until you confirm it.</p></details>
+  <details><summary>How do the personal and business profiles work?</summary><p>They belong to one account but keep separate expenses, budgets and totals. Switch between them at the top of the page.</p></details>
+  <details><summary>Can I see a whole year at once?</summary><p>Yes. The Year tab shows all twelve months, your yearly total, your monthly average and your spending by category. Tap a month to jump to its calendar.</p></details>
+  <details><summary>Which currency does it use?</summary><p>The rupee by default. The symbol is one setting in the page, so you can change it to any currency you like.</p></details>
+</section>
+
+<section class="card cta" aria-labelledby="h-cta">
+  <div><h2 id="h-cta">Start with this month</h2><p class="lead">Create an account, scan one receipt, and watch it land on its day.</p>
+    <div class="ctas"><a class="go" href="/app"><i>&rarr;</i>Get started</a></div></div>
+  <img src="/static/sticker.png" alt="">
+</section>
+
+<footer><span>&copy; <span id="yr"></span> Penny Petal</span><span><a href="/app">Log in</a> &middot; <a href="/reader">Plain receipt reader</a></span></footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id),el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+const CUR='₹',money=n=>CUR+Math.round(n).toLocaleString();
+$('yr').textContent=new Date().getFullYear();
+// sample calendar
+const SHOPS=['Cafe','Groceries','Metro','Pharmacy','Books','Lunch','Fuel','Bakery'];
+const now=new Date();let off=0;
+function drawCal(){
+  const d=new Date(now.getFullYear(),now.getMonth()+off,1),y=d.getFullYear(),m=d.getMonth();
+  $('dMonth').textContent=d.toLocaleString(undefined,{month:'long',year:'numeric'});
+  const first=d.getDay(),dim=new Date(y,m+1,0).getDate(),prev=new Date(y,m,0).getDate(),g=$('dGrid');g.replaceChildren();
+  for(let i=0;i<Math.ceil((first+dim)/7)*7;i++){
+    const day=i-first+1,inM=day>=1&&day<=dim,c=el('div','cell'+(inM?'':' off'));
+    if(!inM){c.append(el('span','n',day<1?prev+day:day-dim));g.append(c);continue}
+    c.append(el('span','n',day));
+    const seed=(day*7+(m+1)*13)%11;
+    if(seed<5){c.classList.add('has');c.append(el('span','m',SHOPS[(day+m)%8]),el('span','a',money(80+seed*140+day*9)))}
+    g.append(c);
+  }
+}
+$('dPrev').onclick=()=>{off--;drawCal()};$('dNext').onclick=()=>{off++;drawCal()};drawCal();
+// sample year
+const M=[18200,15400,21800,17600,19900,23400,16800,20100,18700,25300,22100,19200],mx=Math.max(...M),box=$('yBars');
+M.forEach((v,i)=>{const d=el('div',v===mx?'top':''),b=el('i');b.style.height=v/mx*88+'%';d.append(b,el('span','',new Date(2026,i,1).toLocaleString(undefined,{month:'short'})));box.append(d)});
+$('kT').textContent=money(M.reduce((a,b)=>a+b,0));$('kA').textContent=money(M.reduce((a,b)=>a+b,0)/12);
+$('kH').textContent=new Date(2026,M.indexOf(mx),1).toLocaleString(undefined,{month:'long'});
+</script>
+</body>
+</html>

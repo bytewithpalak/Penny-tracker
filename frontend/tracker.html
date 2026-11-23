@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Penny Petal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#a9d3e6;--pink:#f58ba6;--pinkd:#d9507a;--tint:#fde4ec;--teal:#2c9fc4;--ink:#14141a;--muted:#7b8794;--band:#f4f8fb;--line:#f5b9ca;--good:#1f8a5b;--bad:#c0392b;
+--font:"Montserrat","Segoe UI",system-ui,sans-serif}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font-family:var(--font);color:var(--ink);min-height:100vh;background:linear-gradient(160deg,#9ccbe1,#6aa5c2);padding:1.5rem 1rem;position:relative}
+body::before,body::after{content:"";position:fixed;background:#fff;opacity:.3;filter:blur(46px);border-radius:50%;z-index:0}
+body::before{width:520px;height:300px;left:-140px;top:6%}body::after{width:640px;height:340px;right:-200px;bottom:4%}
+.shell{position:relative;z-index:1;max-width:1180px;margin:0 auto;background:#fff;border-radius:34px;box-shadow:0 30px 60px rgba(15,55,85,.3);overflow:hidden;min-height:660px}
+button,input,select{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:3px solid var(--pinkd);outline-offset:2px}
+h1,h2{margin:0;line-height:1.05;letter-spacing:-.02em;font-weight:800}
+.go{display:inline-flex;align-items:center;gap:.9rem;border:0;border-radius:999px;background:var(--ink);color:#fff;padding:.4rem 1.3rem .4rem .4rem;font-weight:600}
+.go i{width:2.3rem;height:2.3rem;border-radius:50%;background:var(--teal);display:grid;place-items:center;font-style:normal;font-size:1.1rem}
+.go:disabled{opacity:.5;cursor:not-allowed}
+.pill{border:0;border-radius:999px;background:#fff;box-shadow:0 8px 20px rgba(20,40,60,.12);padding:.7rem 1.3rem;font-weight:700}
+.field{width:100%;border:0;border-radius:999px;background:var(--band);padding:.85rem 1.2rem;font-weight:500}
+select.field{appearance:none}
+.err{color:var(--bad);min-height:1.3rem;font-size:.9rem;margin:.2rem 0 0}
+
+/* login */
+.auth{display:grid;grid-template-columns:1fr 1fr;min-height:660px}
+.hero{background:var(--sky);border-bottom-right-radius:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;padding:2rem;text-align:center}
+.hero img{width:min(330px,72%);height:auto;filter:drop-shadow(0 16px 18px rgba(20,60,90,.25))}
+.hero p{margin:0;font-size:1.15rem;font-weight:700;max-width:16ch}
+.form{display:flex;flex-direction:column;justify-content:center;gap:.9rem;padding:3rem clamp(1.5rem,6vw,4.5rem)}
+.form h1{font-size:2.6rem}.form p.sub{margin:0 0 .4rem;color:var(--muted)}
+.circles{display:flex;gap:.6rem}
+.circles button,.tabs button{border:0;border-radius:999px;background:var(--band);padding:.55rem 1.1rem;font-weight:700;color:var(--muted)}
+.circles button[aria-pressed=true],.tabs button[aria-selected=true]{background:var(--pink);color:#fff}
+label span{display:block;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:0 0 .3rem .4rem}
+@media(max-width:820px){.auth{grid-template-columns:1fr}.hero{border-radius:0 0 80px 0;padding:1.5rem}.hero img{width:150px}}
+
+/* app */
+.nav{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between;padding:1.3rem 2rem}
+.logo{font-weight:800;font-size:1.25rem;line-height:1}.logo b{color:var(--teal)}
+.tabs{display:flex;gap:.4rem}
+.right{display:flex;gap:.7rem;align-items:center}
+.search{background:var(--ink);color:#fff;border-radius:999px;padding:.55rem 1rem;border:0;width:11rem;font-size:.85rem}
+.search::placeholder{color:#c9ced6}
+.avatar{width:2.4rem;height:2.4rem;border-radius:50%;background:var(--pink);color:#fff;font-weight:800;display:grid;place-items:center}
+.link{background:none;border:0;color:var(--muted);font-weight:600;text-decoration:underline}
+.bar{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;padding:.2rem 2rem 1rem}
+.bar h2{font-size:2.3rem;margin-right:auto}
+.step{display:flex;align-items:center;background:#fff;border-radius:999px;box-shadow:0 8px 20px rgba(20,40,60,.12)}
+.step button{border:0;background:none;width:2.6rem;height:2.6rem;font-size:1.2rem}
+.step span{padding:0 .6rem;font-weight:700;min-width:5.5rem;text-align:center;border-inline:1px solid #f0d6df}
+#dateHint{margin:-.3rem 0 .7rem;font-size:.85rem;color:var(--muted)}#dateHint.bad{color:var(--bad)}
+#msg{margin:0;padding:0 2rem .6rem;min-height:1.6rem;color:var(--muted);font-size:.9rem}#msg.bad{color:var(--bad)}
+.main{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
+@media(max-width:900px){.main{grid-template-columns:1fr}}
+.calwrap{padding:0 1rem 2rem 2rem}
+.cal{border:3px solid var(--pink);border-radius:22px;overflow:hidden}
+.dow,.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.dow div{background:var(--pink);color:#fff;text-align:center;font-weight:800;font-size:.72rem;padding:.55rem 0;letter-spacing:.08em}
+.cell{min-height:92px;padding:.3rem .35rem;border:0;border-right:2px solid var(--line);border-bottom:2px solid var(--line);background:#fff;text-align:left;display:flex;flex-direction:column;gap:2px;min-width:0}
+.cell:nth-child(7n){border-right:0}.cell:hover:not(:disabled){background:#fff3f7}
+.cell.off{cursor:default}.cell.off .num{color:#e6c3cf}.cell.has{background:var(--tint)}
+.cell.today .num{background:var(--pinkd);color:#fff;border-radius:999px;padding:0 .45rem}
+.num{font-weight:800;font-size:1rem;align-self:flex-start}
+.chip{display:flex;justify-content:space-between;gap:.3rem;font-size:.64rem;font-weight:700;background:#fff;border-radius:6px;padding:1px 5px}
+.chip .m{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.more{font-size:.62rem;color:var(--muted)}.dt{margin-top:auto;font-size:.75rem;color:var(--pinkd);text-align:right}
+.panel{padding:0 0 2rem}
+.eyebrow{padding:0 2rem;color:var(--muted);font-weight:700;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase}
+.big{padding:.3rem 2rem 1rem;font-size:2.7rem;font-weight:800;letter-spacing:-.03em;overflow-wrap:anywhere}
+.band{display:flex;justify-content:space-between;align-items:center;padding:1.05rem 2rem;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.band:nth-child(odd){background:var(--band)}.band b{font-size:1rem;letter-spacing:0;color:var(--ink)}
+.band.total b{font-size:1.6rem;color:var(--teal)}
+.good{color:var(--good)!important}.bad{color:var(--bad)!important}
+.acts{display:flex;gap:.8rem;flex-wrap:wrap;padding:1.4rem 2rem 0}
+.ins{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;padding:0 2rem 2rem}
+@media(max-width:820px){.ins{grid-template-columns:1fr 1fr}}
+.card{background:var(--band);border-radius:22px;padding:1.2rem 1.3rem}
+.card.wide{grid-column:span 2}.card.full{grid-column:1/-1}
+.card h3{margin:0 0 .8rem;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.card .v{font-size:1.7rem;font-weight:800;letter-spacing:-.02em;overflow-wrap:anywhere}
+.meter{height:12px;border-radius:99px;background:#fff;overflow:hidden;margin:.6rem 0 .3rem}.meter i{display:block;height:100%;background:var(--pink);border-radius:99px}.meter i.over{background:var(--bad)}
+.brow{display:grid;grid-template-columns:7.5rem 1fr auto;gap:.6rem;align-items:center;font-size:.82rem;margin:.45rem 0;font-weight:600}
+.brow .t{height:10px;background:#fff;border-radius:99px;overflow:hidden}.brow .t i{display:block;height:100%;background:var(--teal)}
+.bars{display:flex;align-items:flex-end;gap:5px;height:110px}
+.bars div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;align-items:center;gap:4px;font-size:.62rem;color:var(--muted);font-weight:700}
+.bars i{display:block;width:100%;background:var(--pink);border-radius:6px 6px 0 0;min-height:3px}.bars div.cur i{background:var(--teal)}
+.days{height:70px}.days div{gap:0}.days i{border-radius:3px 3px 0 0}
+.budget{display:flex;gap:.5rem;margin-top:.7rem}.budget input{min-width:0;background:#fff}
+.empty{color:var(--muted);margin:0;font-size:.9rem}
+dialog{border:0;border-radius:28px;padding:1.5rem;width:min(500px,94vw);font-family:var(--font);color:var(--ink);box-shadow:0 30px 70px rgba(15,55,85,.4)}
+dialog::backdrop{background:rgba(20,50,75,.45)}
+dialog h2{font-size:1.5rem;margin-bottom:.9rem}
+.entries{list-style:none;margin:0 0 1rem;padding:0;display:grid;gap:.4rem;max-height:260px;overflow:auto}
+.entries li{display:flex;align-items:center;gap:.6rem;background:var(--band);border-radius:16px;padding:.55rem .9rem}
+.entries .g{flex:1;min-width:0;text-align:left;background:none;border:0;padding:0}.entries small{display:block;color:var(--muted)}
+.del{border:0;background:none;color:var(--pinkd);font-weight:700}
+form.fx{display:grid;gap:.7rem}.two{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.row2{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.3rem}
+.strip{display:flex;gap:.4rem;overflow-x:auto;padding:0 2rem 1rem;scroll-snap-type:x proximity}
+.strip button{flex:none;scroll-snap-align:center;border:0;border-radius:999px;background:var(--band);padding:.5rem 1.1rem;font-weight:700;color:var(--muted)}
+.strip button[aria-pressed=true]{background:var(--pink);color:#fff}
+.ybars{height:200px}.ybars button{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;border:0;background:none;padding:0;font-size:.68rem;font-weight:700;color:var(--muted)}
+.ybars button i{display:block;width:100%;background:var(--pink);border-radius:6px 6px 0 0;min-height:3px}.ybars button:hover i{background:var(--teal)}
+.foot{padding:0 2rem 1.5rem;font-size:.8rem}.foot a{color:var(--muted)}
+
+/* motion + dashboard cards */
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+@keyframes grow{from{transform:scaleY(0)}}
+#viewCal,#viewIns,#viewYear{animation:rise .4s both}
+.card{animation:rise .5s both}.band{animation:rise .45s both}.band:nth-child(2){animation-delay:.05s}.band:nth-child(3){animation-delay:.1s}.band:nth-child(4){animation-delay:.15s}
+.cell{animation:rise .4s both;animation-delay:calc(var(--i,0)*12ms);transition:transform .15s,box-shadow .15s}
+.cell:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 8px 16px rgba(217,80,122,.22);z-index:1}
+.bars i,.ybars button i{transform-origin:bottom;animation:grow .8s cubic-bezier(.2,.8,.2,1) both}
+.go{transition:transform .15s}.go:hover:not(:disabled){transform:translateY(-2px)}
+.acts{padding-bottom:1.2rem}
+.dcol{display:grid;gap:.9rem;padding:0 2rem 1.4rem}
+.dark{background:#1a1a1f;color:#fff;border-radius:22px;padding:1.1rem 1.2rem;animation:rise .5s both}
+.dark h4{margin:0;font-size:1rem}.dark small{color:#a8adb7;font-weight:600}
+.dk{display:flex;justify-content:space-between;align-items:flex-end;margin-top:.9rem}.dk small{display:block}.dk b{font-size:1.55rem;letter-spacing:-.02em}
+.pos{color:#4ade80}.neg{color:#ff7b72}
+.prog{height:12px;border-radius:99px;margin:.7rem 0 .45rem;background:repeating-linear-gradient(135deg,#43434b 0 3px,#26262c 3px 6px);overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:#4ade80;border-radius:99px;transition:width 1.1s cubic-bezier(.2,.8,.2,1)}.prog i.over{background:#ff6b6b}
+.tip{margin-top:.8rem;background:#2b2b32;border-radius:14px;padding:.7rem .9rem;font-size:.85rem;color:#cfd3da}.tip b{color:#4ade80}
+.wk{display:flex;justify-content:space-between;align-items:flex-end;gap:.4rem;height:120px;margin-top:.8rem}
+.wk div{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:.35rem;font-size:.58rem;color:#a8adb7;font-weight:700;text-align:center}
+.wk i{display:block;width:8px;border-radius:99px;background:#ff6b6b;transform-origin:bottom;animation:grow .9s cubic-bezier(.2,.8,.2,1) both;min-height:6px}
+.rrow{display:flex;align-items:center;gap:.8rem;background:#1a1a1f;color:#fff;border-radius:18px;padding:.75rem 1rem;animation:rise .45s both;animation-delay:calc(var(--i)*70ms)}
+.rrow .ic{width:2.3rem;height:2.3rem;border-radius:50%;background:#2b2b32;display:grid;place-items:center;font-size:1.1rem}
+.rrow .g{flex:1;min-width:0}.rrow .g span{display:block;font-weight:700}.rrow small{color:#a8adb7}.rrow b{color:#ff8a80}
+.ysel{width:auto;padding:.6rem 1rem;font-weight:700;box-shadow:0 8px 20px rgba(20,40,60,.12);background:#fff}
+.mlgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}@media(max-width:820px){.mlgrid{grid-template-columns:1fr}}
+.mlgrid small{color:var(--muted);font-weight:600;display:block}.mlgrid .v{font-size:1.4rem}
+.goal{background:#fff;border-radius:16px;padding:.8rem 1rem;margin-bottom:.6rem}.gh{display:flex;justify-content:space-between;gap:.6rem;font-size:.85rem}
+.gr{display:flex;gap:.5rem;align-items:center}.gi{padding:.4rem .8rem;min-width:0;font-size:.85rem}
+.gnew{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}.gnew input{flex:1;min-width:7rem;background:#fff}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<section class="auth" id="auth" hidden>
+  <div class="hero">
+    <img src="/static/sticker.png" alt="Smiling red panda coffee cup">
+    <p>Every receipt, one tidy calendar.</p>
+  </div>
+  <form class="form" id="authForm" novalidate>
+    <div class="logo">penny<br><b>petal.</b></div>
+    <h1 id="aTitle">Welcome back.</h1>
+    <p class="sub">Your expenses stay private to your account.</p>
+    <div class="circles" id="tabsRow" role="group" aria-label="Sign in or create account">
+      <button type="button" id="tLogin" aria-pressed="true">Sign in</button>
+      <button type="button" id="tReg" aria-pressed="false">Create account</button>
+    </div>
+    <label id="nameWrap" hidden><span>Your name</span><input class="field" id="name" maxlength="60" autocomplete="name"></label>
+    <label id="emailWrap"><span>Email</span><input class="field" id="email" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com"></label>
+    <label id="pwWrap"><span>Password</span><input class="field" id="pw" type="password" maxlength="128" autocomplete="current-password" placeholder="At least 8 characters"></label>
+    <p class="sub" id="vNote" hidden></p>
+    <label id="codeWrap" hidden><span>6-digit code</span><input class="field" id="code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="123456"></label>
+    <div><button class="link" id="resend" type="button" hidden>Send a new code</button></div>
+    <p class="err" id="aErr" role="alert"></p>
+    <div><button class="go" type="submit" id="goBtn"><i>&rarr;</i><span id="goText">Sign in</span></button></div>
+  </form>
+</section>
+
+<section id="app" hidden>
+  <div class="nav">
+    <div class="logo">penny<br><b>petal.</b></div>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tabCal" aria-selected="true">Calendar</button>
+      <button role="tab" id="tabIns" aria-selected="false">Insights</button>
+      <button role="tab" id="tabYear" aria-selected="false">Year</button>
+    </div>
+    <div class="right">
+      <input class="search" id="q" type="search" placeholder="Search expenses" aria-label="Search expenses">
+      <span class="avatar" id="avatar" aria-hidden="true"></span>
+      <button class="link" id="logout" type="button">Log out</button>
+    </div>
+  </div>
+  <div class="bar">
+    <h2 id="title"></h2>
+    <div class="circles" role="group" aria-label="Profile">
+      <button id="pPersonal" type="button" aria-pressed="true">Personal</button>
+      <button id="pBusiness" type="button" aria-pressed="false">Business</button>
+    </div>
+    <select class="field ysel" id="yearSel" aria-label="Year"></select>
+    <div class="step"><button id="prev" type="button" aria-label="Previous month">&minus;</button><span id="stepLabel"></span><button id="next" type="button" aria-label="Next month">+</button></div>
+  </div>
+  <p id="msg" role="status" aria-live="polite"></p>
+
+  <div class="strip" id="strip" role="group" aria-label="Choose a month"></div>
+  <div id="viewCal" class="main">
+    <div class="calwrap"><div class="cal">
+      <div class="dow"><div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div></div>
+      <div class="grid" id="grid"></div>
+    </div></div>
+    <div class="panel">
+      <div class="eyebrow" id="eyebrow"></div>
+      <div class="big" id="bigTotal"></div>
+      <div class="acts">
+        <button class="go" id="scan" type="button"><i>&#9673;</i>Scan receipts</button>
+        <button class="pill" id="add" type="button">Add expense</button>
+        <input type="file" id="file" accept="image/*" multiple hidden>
+      </div>
+      <div class="dcol" id="dcol"></div>
+      <div id="bands"></div>
+    </div>
+  </div>
+
+  <div id="viewIns" class="ins" hidden>
+    <div class="card"><h3>Spent</h3><div class="v" id="iSpent"></div></div>
+    <div class="card"><h3>Saved</h3><div class="v" id="iSaved"></div></div>
+    <div class="card"><h3>Average per day</h3><div class="v" id="iAvg"></div></div>
+    <div class="card"><h3>Vs last month</h3><div class="v" id="iChg"></div></div>
+    <div class="card"><h3>Biggest day</h3><div class="v" id="iBig"></div></div>
+    <div class="card"><h3>Top place</h3><div class="v" id="iTop"></div></div>
+    <div class="card wide"><h3>Budget</h3><div class="meter"><i id="bar"></i></div><small id="barText"></small>
+      <div class="budget"><input class="field" type="number" id="budget" min="0" step="0.01" placeholder="Monthly budget" aria-label="Monthly budget"><button class="go" id="saveBudget" type="button" style="padding-right:1.1rem"><i>&#10003;</i>Set</button></div></div>
+    <div class="card"><h3>Entries</h3><div class="v" id="iCount"></div><button class="link" id="csv" type="button">Download CSV</button></div>
+    <div class="card wide"><h3>Where it went</h3><div id="cats"></div></div>
+    <div class="card"><h3>Last 6 months</h3><div class="bars" id="trend"></div></div>
+    <div class="card full"><h3>Spending by day</h3><div class="bars days" id="spark" aria-hidden="true"></div></div>
+    <div class="card full" id="mlCard"><h3>Smart insights (machine learning)</h3>
+      <div class="mlgrid"><div><small>Projected month-end</small><div class="v" id="mlProj"></div></div>
+        <div><small>Next month forecast</small><div class="v" id="mlNext"></div></div>
+        <div><small>Unusual spends</small><div class="empty" id="mlAnom"></div></div></div>
+      <div class="budget"><button class="go" id="mlBtn" type="button"><i>&#9654;</i>Test the category model</button><span class="empty" id="mlRep"></span></div></div>
+    <div class="card full"><h3>Savings goals</h3><div id="goalList"></div>
+      <div class="gnew"><input class="field" id="goalName" maxlength="60" placeholder="Saving for..." aria-label="Goal name"><input class="field" id="goalTarget" type="number" min="1" step="0.01" placeholder="Target amount" aria-label="Goal target"><button class="go" id="goalMake" type="button"><i>+</i>Add goal</button></div></div>
+  </div>
+  <div id="viewYear" class="ins" hidden>
+    <div class="card"><h3>Year total</h3><div class="v" id="yTotal"></div></div>
+    <div class="card"><h3>Monthly average</h3><div class="v" id="yAvg"></div></div>
+    <div class="card"><h3>Highest month</h3><div class="v" id="yMax"></div></div>
+    <div class="card full"><h3>Month by month (tap a month to open it)</h3><div class="bars ybars" id="yBars"></div></div>
+    <div class="card full"><h3>All years (tap a year to open it)</h3><div class="bars ybars" id="allYears"></div></div>
+    <div class="card wide"><h3>Where the year went</h3><div id="yCats"></div></div>
+    <div class="card"><h3>Entries</h3><div class="v" id="yCount"></div></div>
+  </div>
+  <p class="foot"><a href="/">Home page</a> &middot; <a href="/reader">Plain receipt reader</a> &middot; <button class="link" id="demoLoad" type="button">Load 5 years of sample data</button> &middot; <button class="link" id="demoClear" type="button">Clear sample data</button></p>
+</section>
+</div>
+
+<dialog id="dlg" aria-labelledby="dTitle">
+  <h2 id="dTitle"></h2>
+  <ul class="entries" id="entries"></ul>
+  <form class="fx" id="form">
+    <div class="two"><label><span>Date</span><input class="field" type="date" id="fDate" required></label>
+      <label><span>Amount</span><input class="field" type="number" id="fAmount" min="0.01" step="0.01" required></label></div>
+    <p id="dateHint" role="status" aria-live="polite" hidden></p>
+    <label><span>Where</span><input class="field" id="fMerchant" maxlength="80" required></label>
+    <div class="two"><label><span>Category</span><select class="field" id="fCat"></select></label>
+      <label><span>Note</span><input class="field" id="fNote" maxlength="200"></label></div>
+    <div class="row2">
+      <button class="go" type="submit"><i>&#10003;</i>Save</button>
+      <button class="pill" type="button" id="scan2">Scan receipts</button>
+      <button class="pill" type="button" id="close">Close</button>
+    </div>
+  </form>
+  <div class="row2" id="listClose" hidden><button class="pill" type="button" id="close2">Close</button></div>
+</dialog>
+
+<script>
+const CURRENCY = '₹';   // change to '$', '£', '€' ... if you like
+const CATS = ['Food & drink','Groceries','Transport','Health','Shopping','Bills','Office','Other'];
+const $ = id => document.getElementById(id);
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+const money = n => CURRENCY + Number(n).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+const pad = n => String(n).padStart(2, '0');
+const iso = (y, m, d) => `${y}-${pad(m + 1)}-${pad(d)}`;
+const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/;
+const now = new Date(), todayKey = iso(now.getFullYear(), now.getMonth(), now.getDate());
+const S = {tab: 'cal', yr: null, user: null, profile: 'personal', y: now.getFullYear(), m: now.getMonth(), items: [], sum: null, trend: [], ocr: '', mode: 'login'};
+const monthKey = () => `${S.y}-${pad(S.m + 1)}`;
+const monthName = (y, m, o = {month: 'long'}) => new Date(y, m, 1).toLocaleString(undefined, o);
+CATS.forEach(c => $('fCat').append(new Option(c, c)));
+
+async function api(path, opt) {
+  const r = await fetch('/api' + path, opt), b = await r.json().catch(() => ({}));
+  if (r.status === 401 && !path.startsWith('/auth/')) { showAuth(); throw new Error('Please sign in again.'); }
+  if (!r.ok) throw new Error(typeof b.detail === 'string' ? b.detail : 'Please check the details you entered.');
+  return b;
+}
+const send = (p, body, method = 'POST') => api(p, {method, headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+function say(t, bad) { $('msg').textContent = t || ''; $('msg').className = bad ? 'bad' : ''; }
+
+// ---------- login / sign up ----------
+function setMode(m) {
+  S.mode = m; const login = m === 'login', ver = m === 'verify';
+  $('tLogin').setAttribute('aria-pressed', login); $('tReg').setAttribute('aria-pressed', m === 'register');
+  $('nameWrap').hidden = m !== 'register'; $('pwWrap').hidden = ver; $('codeWrap').hidden = !ver; $('vNote').hidden = !ver;
+  $('resend').hidden = !ver; $('tabsRow').hidden = ver; $('email').readOnly = ver;
+  $('aTitle').textContent = ver ? 'Check your email.' : login ? 'Welcome back.' : 'Create your account.';
+  $('goText').textContent = ver ? 'Verify' : login ? 'Sign in' : 'Create account'; $('aErr').textContent = '';
+  $('pw').autocomplete = login ? 'current-password' : 'new-password';
+}
+function startVerify(email, sent, msg) {
+  setMode('verify');
+  $('vNote').textContent = msg || `We sent a 6-digit code to ${email}.` + (sent ? ' It expires in 10 minutes.' : ' Email sending is not set up on this server yet, so the code was printed in the server window.');
+}
+$('tLogin').onclick = () => setMode('login'); $('tReg').onclick = () => setMode('register');
+$('authForm').onsubmit = async e => {
+  e.preventDefault();
+  const email = $('email').value.trim(), password = $('pw').value, name = $('name').value.trim();
+  if (!EMAIL.test(email)) return $('aErr').textContent = 'Enter a valid email address, like name@example.com.';
+  if (S.mode === 'verify') {
+    const code = $('code').value.trim();
+    if (!/^\d{6}$/.test(code)) return $('aErr').textContent = 'Enter the 6-digit code from your email.';
+    $('goBtn').disabled = true;
+    try { S.user = await send('/auth/verify', {email, code}); $('code').value = ''; $('pw').value = ''; showApp(); }
+    catch (err) { $('aErr').textContent = err.message; }
+    $('goBtn').disabled = false; return;
+  }
+  if (S.mode === 'register' && !name) return $('aErr').textContent = 'Please enter your name.';
+  if (S.mode === 'register' && password.length < 8) return $('aErr').textContent = 'Use at least 8 characters for your password.';
+  if (!password) return $('aErr').textContent = 'Enter your password.';
+  $('goBtn').disabled = true;
+  try {
+    const r = await send(S.mode === 'login' ? '/auth/login' : '/auth/register', {name, email, password});
+    if (r.verify) startVerify(email, r.sent); else { S.user = r; $('pw').value = ''; showApp(); }
+  } catch (err) {
+    if (/^Please verify/.test(err.message)) startVerify(email, true, err.message); else $('aErr').textContent = err.message;
+  }
+  $('goBtn').disabled = false;
+};
+$('resend').onclick = async () => {
+  try { await send('/auth/resend', {email: $('email').value.trim()}); $('aErr').textContent = ''; $('vNote').textContent = 'We sent a new code. Check your inbox and spam folder.'; }
+  catch (err) { $('aErr').textContent = err.message; }
+};
+function showAuth() { $('auth').hidden = false; $('app').hidden = true; }
+function showApp() { $('auth').hidden = true; $('app').hidden = false; $('avatar').textContent = (S.user.name || '?')[0].toUpperCase(); load(); }
+$('logout').onclick = async () => { try { await send('/auth/logout', {}); } catch (e) {} S.user = null; showAuth(); };
+(async () => { try { S.user = await api('/auth/me'); showApp(); } catch (e) { showAuth(); } })();
+
+// ---------- data ----------
+async function load() {
+  const q = `?profile=${S.profile}&month=${monthKey()}`;
+  try {
+    const jobs = [api('/expenses' + q), api('/summary' + q), api('/trend' + q), api('/home?profile=' + S.profile)];
+    if (S.tab === 'year') jobs.push(api(`/year?profile=${S.profile}&year=${S.y}`), api('/years?profile=' + S.profile));
+    if (S.tab === 'ins') jobs.push(api('/ml/insights' + q), api('/goals'));
+    const r = await Promise.all(jobs); [S.items, S.sum, S.trend, S.home] = r;
+    if (S.tab === 'year') { S.yr = r[4]; S.years = r[5]; }
+    if (S.tab === 'ins') { S.ml = r[4]; S.goals = r[5]; }
+    render();
+  }
+  catch (e) { say('Could not load your expenses: ' + e.message, true); }
+}
+function render() {
+  const yr = S.tab === 'year';
+  $('title').textContent = yr ? 'Year ' + S.y : monthName(S.y, S.m) + ' ' + S.y;
+  $('stepLabel').textContent = yr ? String(S.y) : monthName(S.y, S.m, {month: 'short'}) + ' ' + String(S.y).slice(2);
+  renderStrip();
+  $('pPersonal').setAttribute('aria-pressed', S.profile === 'personal'); $('pBusiness').setAttribute('aria-pressed', S.profile === 'business');
+  renderCal(); renderPanel(); renderDark(); renderInsights(); if (S.tab === 'ins' && S.ml) { renderMl(); renderGoals(); } if (yr && S.yr) renderYear();
+}
+function renderCal() {
+  const g = $('grid'); g.replaceChildren();
+  const first = new Date(S.y, S.m, 1).getDay(), dim = new Date(S.y, S.m + 1, 0).getDate(), prevDim = new Date(S.y, S.m, 0).getDate();
+  const byDay = {}; S.items.forEach(e => (byDay[e.date] ??= []).push(e));
+  for (let i = 0; i < Math.ceil((first + dim) / 7) * 7; i++) {
+    const d = i - first + 1, inM = d >= 1 && d <= dim, c = el('button', 'cell' + (inM ? '' : ' off')); c.type = 'button';
+    if (!inM) { c.disabled = true; c.tabIndex = -1; c.append(el('span', 'num', d < 1 ? prevDim + d : d - dim)); g.append(c); continue; }
+    const key = iso(S.y, S.m, d), list = byDay[key] || []; c.style.setProperty('--i', i);
+    c.append(el('span', 'num', d));
+    if (list.length) {
+      c.classList.add('has');
+      list.slice(0, 2).forEach(e => { const ch = el('span', 'chip'); ch.append(el('span', 'm', e.merchant), el('span', '', money(e.amount))); c.append(ch); });
+      if (list.length > 2) c.append(el('span', 'more', `+${list.length - 2} more`));
+      c.append(el('strong', 'dt', money(list.reduce((a, e) => a + e.amount, 0))));
+    }
+    if (key === todayKey) c.classList.add('today');
+    c.setAttribute('aria-label', `${key}: ${list.length} expenses. Open`); c.onclick = () => openDay(key); g.append(c);
+  }
+}
+function renderPanel() {
+  const s = S.sum;
+  $('eyebrow').textContent = (S.profile === 'personal' ? 'Personal' : 'Business') + ' · total spent';
+  countUp($('bigTotal'), s.total);
+  const rows = [['Budget', s.budget ? money(s.budget) : 'Not set', ''],
+    [s.saved != null && s.saved < 0 ? 'Over budget by' : 'Saved', s.saved == null ? 'Set a budget' : money(Math.abs(s.saved)), s.saved == null ? '' : s.saved < 0 ? 'bad' : 'good'],
+    ['Average per day', money(s.avg_per_day), ''],
+    ['Vs last month', s.change_pct == null ? 'n/a' : (s.change_pct > 0 ? '+' : '') + s.change_pct + '%', s.change_pct == null ? '' : s.change_pct > 0 ? 'bad' : 'good'],
+    ['Entries', s.count, '']];
+  const b = $('bands'); b.replaceChildren();
+  rows.forEach(r => { const d = el('div', 'band'); d.append(el('span', '', r[0]), el('b', r[2], r[1])); b.append(d); });
+  const t = el('div', 'band total'); t.append(el('span', '', 'Total'), el('b', '', money(s.total))); b.append(t);
+}
+function renderStrip() {
+  const ys = $('yearSel'); ys.replaceChildren();
+  for (let y = Math.min(S.y, now.getFullYear()) - 10; y <= Math.max(S.y, now.getFullYear()) + 1; y++) ys.append(new Option(y, y));
+  ys.value = S.y;
+  const st = $('strip'); st.replaceChildren();
+  for (let i = 0; i < 12; i++) {
+    const b = el('button', '', monthName(S.y, i, {month: 'short'})); b.type = 'button'; b.setAttribute('aria-pressed', i === S.m);
+    b.onclick = () => { S.m = i; load(); }; st.append(b);
+  }
+  const a = st.children[S.m]; st.scrollLeft = a.offsetLeft - st.clientWidth / 2 + a.clientWidth / 2;
+}
+function renderYear() {
+  const y = S.yr, box = $('yBars'); box.replaceChildren();
+  setStat('yTotal', money(y.total)); setStat('yAvg', money(y.avg_per_month)); setStat('yCount', y.count);
+  setStat('yMax', y.max_month ? monthName(S.y, y.max_month - 1) + ' · ' + money(y.max_total) : 'n/a');
+  const mx = Math.max(...y.months, 1);
+  y.months.forEach((v, i) => {
+    const b = el('button'), bar = el('i'); b.type = 'button'; bar.style.height = Math.max(v / mx * 85, 3) + '%';
+    b.title = money(v); b.setAttribute('aria-label', `${monthName(S.y, i)}: ${money(v)}. Open this month`);
+    b.append(bar, el('span', '', monthName(S.y, i, {month: 'short'}))); b.onclick = () => { S.m = i; tab('cal'); }; box.append(b);
+  });
+  const ay = $('allYears'); ay.replaceChildren();
+  const ymx = Math.max(...(S.years || []).map(x => x.total), 1);
+  (S.years || []).forEach(x => {
+    const b = el('button'), bar = el('i'); b.type = 'button'; bar.style.height = Math.max(x.total / ymx * 85, 3) + '%';
+    if (x.year === S.y) bar.style.background = 'var(--teal)';
+    b.title = money(x.total); b.setAttribute('aria-label', `${x.year}: ${money(x.total)}. Open this year`);
+    b.append(bar, el('span', '', x.year)); b.onclick = () => { S.y = x.year; load(); }; ay.append(b);
+  });
+  if (!(S.years || []).length) ay.append(el('p', 'empty', 'Your yearly totals will appear here.'));
+  const cats = $('yCats'); cats.replaceChildren();
+  if (!y.by_category.length) cats.append(el('p', 'empty', 'No expenses in this year yet.'));
+  y.by_category.forEach(c => { const r = el('div', 'brow'), t = el('div', 't'), i = el('i'); i.style.width = c.total / y.total * 100 + '%'; t.append(i); r.append(el('span', '', c.name), t, el('b', '', money(c.total))); cats.append(r); });
+}
+function setStat(id, text, cls = '') { $(id).textContent = text; $(id).className = 'v ' + cls; }
+function renderInsights() {
+  const s = S.sum;
+  setStat('iSpent', money(s.total));
+  s.saved == null ? setStat('iSaved', 'Set a budget') : setStat('iSaved', (s.saved < 0 ? '-' : '') + money(Math.abs(s.saved)), s.saved < 0 ? 'bad' : 'good');
+  setStat('iAvg', money(s.avg_per_day));
+  s.change_pct == null ? setStat('iChg', 'n/a') : setStat('iChg', (s.change_pct > 0 ? '+' : '') + s.change_pct + '%', s.change_pct > 0 ? 'bad' : 'good');
+  setStat('iBig', s.biggest_day ? `${s.biggest_day.day} ${monthName(S.y, S.m, {month: 'short'})}` : 'n/a');
+  setStat('iTop', s.top_merchant ? s.top_merchant.name : 'n/a'); setStat('iCount', s.count);
+  const pct = s.budget ? s.total / s.budget * 100 : 0;
+  $('bar').style.width = Math.min(pct, 100) + '%'; $('bar').className = pct > 100 ? 'over' : '';
+  $('barText').textContent = s.budget ? `${Math.round(pct)}% of ${money(s.budget)} used` : 'No budget set for this profile.';
+  $('budget').value = s.budget || '';
+  const cats = $('cats'); cats.replaceChildren();
+  if (!s.by_category.length) cats.append(el('p', 'empty', 'No expenses yet this month.'));
+  s.by_category.forEach(c => { const r = el('div', 'brow'), t = el('div', 't'), i = el('i'); i.style.width = c.total / s.total * 100 + '%'; t.append(i); r.append(el('span', '', c.name), t, el('b', '', money(c.total))); cats.append(r); });
+  const bars = (box, vals, labels, cur) => { box.replaceChildren(); const mx = Math.max(...vals, 1);
+    vals.forEach((v, i) => { const d = el('div', i === cur ? 'cur' : ''), b = el('i'); b.style.height = Math.max(v / mx * 85, 3) + '%'; b.title = money(v); d.append(b); if (labels) d.append(el('span', '', labels[i])); box.append(d); }); };
+  bars($('trend'), S.trend.map(t => t.total), S.trend.map(t => monthName(+t.month.slice(0, 4), +t.month.slice(5) - 1, {month: 'short'})), S.trend.length - 1);
+  bars($('spark'), s.days);
+}
+
+// ---------- dashboard cards, motion, ML + goals ----------
+const ICON = {'Food & drink': '🍜', 'Groceries': '🥕', 'Transport': '🚌', 'Health': '💊', 'Shopping': '🛍️', 'Bills': '🧾', 'Office': '📎', 'Other': '✨'};
+function countUp(node, to) {
+  const from = parseFloat(node.dataset.v || 0); node.dataset.v = to;
+  if (from === to || matchMedia('(prefers-reduced-motion: reduce)').matches) { node.textContent = money(to); return; }
+  const t0 = performance.now();
+  (function f(t) { const k = Math.min((t - t0) / 700, 1), e = 1 - Math.pow(1 - k, 3); node.textContent = money(from + (to - from) * e); if (k < 1) requestAnimationFrame(f); })(t0);
+}
+function renderDark() {
+  const s = S.sum, box = $('dcol'); box.replaceChildren();
+  const dim = new Date(S.y, S.m + 1, 0).getDate(), cur = S.y === now.getFullYear() && S.m === now.getMonth();
+  const c = el('div', 'dark'), head = el('div');
+  head.append(el('h4', '', 'Monthly budget'), el('small', '', `${S.profile === 'personal' ? 'Personal' : 'Business'} · ${monthName(S.y, S.m)} ${S.y}`)); c.append(head);
+  if (!s.budget) c.append(el('div', 'tip', 'Set a monthly budget in Insights and this card will show how much you can spend each day.'));
+  else {
+    const left = s.budget - s.total, pct = Math.min(s.total / s.budget * 100, 100), dk = el('div', 'dk'), a = el('div'), b = el('div');
+    a.append(el('small', '', 'Available'), el('b', left < 0 ? 'neg' : 'pos', (left < 0 ? '-' : '') + money(Math.abs(left))));
+    b.append(el('small', '', 'Budget'), el('b', '', money(s.budget))); b.style.textAlign = 'right'; dk.append(a, b); c.append(dk);
+    const pr = el('div', 'prog'), fill = el('i', left < 0 ? 'over' : ''); pr.append(fill); c.append(pr);
+    requestAnimationFrame(() => requestAnimationFrame(() => { fill.style.width = pct + '%'; }));
+    c.append(el('small', '', `${money(s.total)} spent (${Math.round(s.total / s.budget * 100)}%)`));
+    const daysLeft = cur ? dim - now.getDate() + 1 : (new Date(S.y, S.m, 1) > now ? dim : 0), tip = el('div', 'tip');
+    if (left < 0) tip.textContent = `You are over budget by ${money(-left)}.`;
+    else if (daysLeft > 0) tip.append('You can spend ', el('b', '', money(left / daysLeft) + '/day'), cur ? ' for the rest of the month.' : ' across the month.');
+    else tip.textContent = 'This month is over, and you finished within budget.';
+    c.append(tip);
+  }
+  box.append(c);
+  const home = S.home || {week: [], recent: []}, w = el('div', 'dark'), wk = el('div', 'wk');
+  const mx = Math.max(...home.week.map(d => d.total), 1);
+  home.week.forEach(d => {
+    const dt = new Date(d.date + 'T00:00'), col = el('div'), bar = el('i');
+    bar.style.height = Math.max(d.total / mx * 70, 5) + '%'; bar.title = money(d.total);
+    col.append(bar, el('span', '', dt.toLocaleDateString(undefined, {weekday: 'short'}).toUpperCase() + ' ' + pad(dt.getDate()))); wk.append(col);
+  });
+  w.append(el('h4', '', 'Last 7 days'), wk); box.append(w);
+  home.recent.slice(0, 5).forEach((e, i) => {
+    const r = el('div', 'rrow'), g = el('div', 'g'); r.style.setProperty('--i', i);
+    g.append(el('span', '', e.merchant), el('small', '', `${e.category} · ${e.date}`));
+    r.append(el('span', 'ic', ICON[e.category] || '✨'), g, el('b', '', money(e.amount))); box.append(r);
+  });
+}
+function renderMl() {
+  const m = S.ml;
+  $('mlProj').textContent = money(m.projected_end);
+  $('mlNext').textContent = m.history_months >= 3 ? money(m.next_month) : 'Needs 3+ months of data';
+  const a = $('mlAnom'); a.replaceChildren();
+  if (!m.unusual.length) a.textContent = 'Nothing unusual this month.';
+  m.unusual.forEach(u => a.append(el('div', '', `${u.merchant} ${money(u.amount)} (usually about ${money(u.typical)} for ${u.category})`)));
+}
+$('mlBtn').onclick = async () => {
+  $('mlRep').textContent = 'Testing...';
+  try {
+    const r = await api('/ml/category-report');
+    $('mlRep').textContent = `Trained on ${r.train} expenses, tested on ${r.test} unseen ones: the model got ${Math.round(r.model * 100)}% right, keyword rules ${Math.round(r.rules * 100)}%, always guessing the most common category ${Math.round(r.majority * 100)}%.`;
+  } catch (e) { $('mlRep').textContent = e.message; }
+};
+function renderGoals() {
+  const box = $('goalList'); box.replaceChildren();
+  if (!S.goals.length) box.append(el('p', 'empty', 'No goals yet. Name something you are saving for.'));
+  S.goals.forEach(g => {
+    const r = el('div', 'goal'), t = el('div', 'meter'), f = el('i'), head = el('div', 'gh'), row = el('div', 'gr');
+    f.style.width = Math.min(g.saved / g.target * 100, 100) + '%'; t.append(f);
+    head.append(el('b', '', g.name), el('span', '', `${money(g.saved)} of ${money(g.target)}`));
+    const add = el('input', 'field gi'); add.type = 'number'; add.min = '1'; add.step = '0.01'; add.placeholder = 'Add savings'; add.setAttribute('aria-label', 'Add savings to ' + g.name);
+    const ab = el('button', 'pill', 'Add'), del = el('button', 'del', 'Remove'); ab.type = del.type = 'button';
+    ab.onclick = async () => { const v = parseFloat(add.value); if (!(v > 0)) return say('Enter an amount to add.', true); try { await send(`/goals/${g.id}/add`, {amount: v}); load(); } catch (e) { say(e.message, true); } };
+    del.onclick = async () => { try { await api('/goals/' + g.id, {method: 'DELETE'}); load(); } catch (e) { say(e.message, true); } };
+    row.append(add, ab, del); r.append(head, t, row); box.append(r);
+  });
+}
+$('goalMake').onclick = async () => {
+  const name = $('goalName').value.trim(), target = parseFloat($('goalTarget').value);
+  if (!name || !(target > 0)) return say('Give the goal a name and a target amount.', true);
+  try { await send('/goals', {name, target}); $('goalName').value = ''; $('goalTarget').value = ''; load(); } catch (e) { say(e.message, true); }
+};
+$('demoLoad').onclick = async () => { say('Adding 5 years of sample expenses...'); try { const r = await api('/demo?profile=' + S.profile, {method: 'POST'}); say(`Added ${r.added} sample expenses.`); load(); } catch (e) { say(e.message, true); } };
+$('demoClear').onclick = async () => { try { const r = await api('/demo?profile=' + S.profile, {method: 'DELETE'}); say(`Removed ${r.removed} sample expenses.`); load(); } catch (e) { say(e.message, true); } };
+$('yearSel').onchange = () => { S.y = +$('yearSel').value; load(); };
+document.addEventListener('keydown', e => {
+  if ($('app').hidden || $('dlg').open || /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  if (e.key === 'ArrowLeft') $('prev').click(); if (e.key === 'ArrowRight') $('next').click();
+});
+
+// ---------- tabs, navigation, profiles ----------
+function tab(t) {
+  S.tab = t;
+  ['Cal', 'Ins', 'Year'].forEach(k => { const on = k.toLowerCase() === t; $('view' + k).hidden = !on; $('tab' + k).setAttribute('aria-selected', on); });
+  $('strip').hidden = t === 'year'; load();
+}
+$('tabCal').onclick = () => tab('cal'); $('tabIns').onclick = () => tab('ins'); $('tabYear').onclick = () => tab('year');
+$('prev').onclick = () => { if (S.tab === 'year') S.y--; else { S.m--; if (S.m < 0) { S.m = 11; S.y--; } } load(); };
+$('next').onclick = () => { if (S.tab === 'year') S.y++; else { S.m++; if (S.m > 11) { S.m = 0; S.y++; } } load(); };
+$('pPersonal').onclick = () => { S.profile = 'personal'; load(); };
+$('pBusiness').onclick = () => { S.profile = 'business'; load(); };
+$('saveBudget').onclick = async () => { try { await send('/budget', {profile: S.profile, amount: parseFloat($('budget').value || 0)}, 'PUT'); say('Budget saved.'); load(); } catch (e) { say(e.message, true); } };
+$('csv').onclick = () => {
+  const q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  const rows = [['Date', 'Where', 'Category', 'Amount', 'Note'], ...S.items.map(e => [e.date, e.merchant, e.category, e.amount, e.note])];
+  const a = el('a'); a.href = URL.createObjectURL(new Blob([rows.map(r => r.map(q).join(',')).join('\n')], {type: 'text/csv'}));
+  a.download = `expenses-${S.profile}-${monthKey()}.csv`; a.click(); URL.revokeObjectURL(a.href);
+};
+
+// ---------- dialog: a day, search results, manual entry, scanned receipt ----------
+function listItems(items, withDelete, dateKey) {
+  const ul = $('entries'); ul.replaceChildren();
+  if (!items.length) ul.append(el('li', 'empty', withDelete ? 'Nothing logged on this day yet.' : 'No matching expenses.'));
+  items.forEach(e => {
+    const li = el('li'), g = el(withDelete ? 'div' : 'button', 'g'); if (!withDelete) g.type = 'button';
+    g.append(el('b', '', e.merchant), el('small', '', (withDelete ? '' : e.date + ' · ') + e.category + (e.note ? ' · ' + e.note : '')));
+    li.append(g, el('b', '', money(e.amount)));
+    if (withDelete) { const b = el('button', 'del', 'Delete'); b.type = 'button'; b.setAttribute('aria-label', 'Delete ' + e.merchant);
+      b.onclick = async () => { try { await api('/expenses/' + e.id, {method: 'DELETE'}); await load(); openDay(dateKey); } catch (x) { say(x.message, true); } }; li.append(b); }
+    else g.onclick = async () => { S.y = +e.date.slice(0, 4); S.m = +e.date.slice(5, 7) - 1; $('dlg').close(); await load(); openDay(e.date); };
+    ul.append(li);
+  });
+}
+let Q = null;   // the batch of scanned receipts being reviewed: {n, saved, step, stop}
+function setHint(t, bad) { const h = $('dateHint'); h.textContent = t || ''; h.hidden = !t; h.className = bad ? 'bad' : ''; }
+function openDay(dateKey, prefill = {}) {
+  // dateKey may be '' for a scanned receipt with no readable date: the field stays empty and the user must pick it.
+  $('dTitle').textContent = dateKey ? new Date(dateKey + 'T00:00').toLocaleDateString(undefined, {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'}) : 'New expense from receipt';
+  listItems(dateKey ? S.items.filter(e => e.date === dateKey) : [], true, dateKey);
+  $('form').hidden = false; $('listClose').hidden = true;
+  $('fDate').value = dateKey || ''; $('fMerchant').value = prefill.merchant || ''; $('fAmount').value = prefill.amount || '';
+  $('fCat').value = CATS.includes(prefill.category) ? prefill.category : 'Other'; $('fNote').value = ''; S.ocr = prefill.ocr || '';
+  setHint(prefill.hint, prefill.hintBad);
+  $('close').textContent = Q && Q.step && Q.n > 1 ? 'Skip' : 'Close';
+  if (!$('dlg').open) $('dlg').showModal();
+  if (!dateKey && prefill.hint) $('fDate').focus();
+}
+$('add').onclick = () => openDay(todayKey);
+$('fDate').onchange = () => setHint($('fDate').value ? '' : 'Please choose the date on the receipt before saving.', !$('fDate').value);
+$('close').onclick = $('close2').onclick = () => {
+  if (Q && Q.step) { const step = Q.step; Q.step = null; $('dlg').close(); step(); }     // "Skip" during a batch: go to the next receipt
+  else $('dlg').close();
+};
+$('dlg').addEventListener('cancel', () => {                                               // Esc during a batch stops the rest
+  if (Q && Q.step) { const step = Q.step; Q.step = null; Q.stop = true; step(); }
+});
+$('form').onsubmit = async ev => {
+  ev.preventDefault();
+  if (!$('fDate').value) { setHint('Please choose the date on the receipt before saving.', true); return $('fDate').focus(); }
+  const body = {profile: S.profile, date: $('fDate').value, merchant: $('fMerchant').value, amount: parseFloat($('fAmount').value), category: $('fCat').value, note: $('fNote').value, ocr_text: S.ocr};
+  try {
+    await send('/expenses', body); S.y = +body.date.slice(0, 4); S.m = +body.date.slice(5, 7) - 1;
+    const step = Q && Q.step; if (step) { Q.saved++; Q.step = null; }
+    $('dlg').close(); say('Saved.'); await load();
+    if (step) step();                                                                      // batch: on to the next receipt
+  } catch (e) { say(e.message, true); }
+};
+$('q').onkeydown = async ev => {
+  if (ev.key !== 'Enter') return;
+  const q = $('q').value.trim(); if (q.length < 2) return say('Type at least 2 letters to search.', true);
+  try { const r = await api(`/search?profile=${S.profile}&q=${encodeURIComponent(q)}`); say('');
+    $('dTitle').textContent = `${r.length} result${r.length === 1 ? '' : 's'} for "${q}"`; listItems(r, false);
+    $('form').hidden = true; $('listClose').hidden = false; if (!$('dlg').open) $('dlg').showModal(); }
+  catch (e) { say(e.message, true); }
+};
+
+// ---------- scan one or many receipts (uses the OCR service) ----------
+const MAX_RECEIPTS = 20;
+$('scan').onclick = $('scan2').onclick = () => { if (Q) say('Finish the current receipts first.', true); else $('file').click(); };
+const extractOne = f => { const form = new FormData(); form.append('file', f); return api('/extract?preview=0', {method: 'POST', body: form}); };
+
+function reviewOne(r, i, n) {          // show one scanned receipt in the form; resolves when it is saved or skipped
+  return new Promise(resolve => {
+    Q.step = resolve;
+    const prefill = {merchant: r.fields.company, amount: r.fields.total ? r.fields.total.replace(/,/g, '') : '', category: r.category, ocr: r.text};
+    const lead = n > 1 ? 'Receipt ' + (i + 1) + ' of ' + n + '. ' : '';
+    if (r.date_iso) {                  // use the receipt's own date exactly; the user can still edit it
+      prefill.hint = lead + 'Date read from the receipt' + (r.fields.date ? ' (' + r.fields.date + ')' : '') + '. Change it if it looks wrong.';
+      say('Check the details, then save.');
+      openDay(r.date_iso, prefill);
+    } else {                           // never fall back to today or to the day that was open: leave it empty
+      prefill.hintBad = true;
+      prefill.hint = lead + (r.date_invalid ? '"' + r.date_invalid + '" is not a valid date. Please enter the receipt date.'
+                                            : 'No date could be read from this receipt. Please enter the receipt date.');
+      say('Please enter the receipt date, then save.', true);
+      openDay('', prefill);
+    }
+  });
+}
+
+$('file').onchange = async () => {
+  const all = [...$('file').files]; $('file').value = ''; if (!all.length) return;
+  const files = all.filter(f => f.type.startsWith('image/'));
+  if (!files.length) return say('Please choose image files (JPG, PNG or WebP).', true);
+  if (files.length > MAX_RECEIPTS) return say('Please choose at most ' + MAX_RECEIPTS + ' receipts at a time.', true);
+  const n = files.length, failed = []; Q = {n, saved: 0, step: null, stop: false}; $('scan').disabled = true;
+  // The server reads receipts one at a time. Start them all now, so while you check one the next is already being read.
+  let chain = Promise.resolve();
+  const jobs = files.map(f => (chain = chain.then(() => extractOne(f).then(r => ({r}), e => ({err: e.message})))));
+  try {
+    for (let i = 0; i < n && !Q.stop; i++) {
+      say(n > 1 ? 'Reading receipt ' + (i + 1) + ' of ' + n + '. The first scan can take a minute while models load.'
+                : 'Reading your receipt. The first scan can take a minute while models load.');
+      const out = await jobs[i];
+      if (out.err) { failed.push((n > 1 ? files[i].name + ': ' : '') + out.err); if (out.err.startsWith('Please sign in')) break; continue; }
+      await reviewOne(out.r, i, n);
+    }
+  } finally {
+    const saved = Q.saved, stopped = Q.stop; Q = null; $('scan').disabled = false; $('close').textContent = 'Close';
+    const bits = [];
+    if (n > 1) bits.push((stopped ? 'Stopped. ' : '') + 'Saved ' + saved + ' of ' + n + ' receipts.'); else if (saved) bits.push('Saved.');
+    if (failed.length) bits.push('Could not read: ' + failed.join('; '));
+    say(bits.join(' '), failed.length > 0);
+  }
+};
+</script>
+</body>
+</html>
