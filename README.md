@@ -8,7 +8,7 @@ Image -> OpenCV preprocessing -> text detection (EasyOCR/CRAFT)
       -> rule-based field extraction -> JSON -> web UI
 ```
 
-**Live demo:** _add your link here_
+
 
 ![demo](docs/demo.gif)  <!-- record a short GIF and put it in docs/ -->
 
