@@ -4,6 +4,7 @@
 
 Convert receipt images into structured expense records automatically. The system recognises printed text, extracts important transaction details, categorises expenses, and provides intelligent spending insights.
 
+**Demo Video- https://drive.google.com/file/d/1efbeLu5S-KQ5CgxWY3X8069-3WZgWQM7/view?usp=sharing
 ---
 
 ## 🚀 Overview
