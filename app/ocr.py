@@ -35,14 +35,19 @@ def get_trocr():
 
 
 def available_engines():
-    """trocr is offered when TROCR_MODEL is a local folder that exists,
+    """trocr is offered (first, as the most accurate) when TROCR_MODEL is a local folder holding a model,
     or a Hugging Face Hub id like 'your-name/trocr-receipt'."""
     engines = ['easyocr', 'tesseract']
-    is_local = os.path.isdir(TROCR_PATH)
+    is_local = os.path.isfile(os.path.join(TROCR_PATH, 'config.json'))   # an empty folder does not count
     looks_like_hub_id = '/' in TROCR_PATH and not TROCR_PATH.startswith(('models/', './', '/'))
     if is_local or looks_like_hub_id:
-        engines.append('trocr')
+        engines.insert(0, 'trocr')
     return engines
+
+
+def default_engine():
+    """TrOCR had the best accuracy in our evaluation, so it is used whenever it is available; EasyOCR otherwise."""
+    return available_engines()[0]
 
 
 def _bbox(box):

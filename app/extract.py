@@ -4,7 +4,14 @@ import re
 from app.dates import find_receipt_date
 
 
-MONEY = r'(\d{1,3}(?:,\d{3})*\.\d{2}|\d+\.\d{2})'
+# An amount with two decimals. Not part of a longer number such as a time (10.38.03) or an ID.
+# Also accepts a comma as the decimal mark ("55,00"), which OCR often produces for a dot.
+MONEY = r'(?<![\d.])(\d{1,3}(?:,\d{3})+\.\d{2}|\d+\.\d{2}|\d+,\d{2})(?![\d,]|\.\d)'
+
+
+def _amounts(line):
+    """Amounts on a line as printed, except a comma decimal ("55,00") becomes a dot ("55.00")."""
+    return [n.replace(',', '.') if re.fullmatch(r'\d+,\d{2}', n) else n for n in re.findall(MONEY, line)]
 TOTAL_SKIP = ('subtotal', 'sub total', 'sub-total', 'total qty', 'total item', 'total discount', 'total tax')
 
 
@@ -19,13 +26,13 @@ def find_total(lines):
         low = line.lower()
         if 'total' not in low or any(s in low for s in TOTAL_SKIP):
             continue
-        nums = re.findall(MONEY, line)
+        nums = _amounts(line)
         if not nums and i + 1 < len(lines):          # amount printed on the next line
-            nums = re.findall(MONEY, lines[i + 1])
+            nums = _amounts(lines[i + 1])
         if nums:
             best = nums[-1]                           # last match wins (rounded totals come last)
     if best is None:                                  # fallback: largest amount on the receipt
-        vals = [float(n.replace(',', '')) for l in lines for n in re.findall(MONEY, l)]
+        vals = [float(n.replace(',', '')) for l in lines for n in _amounts(l)]
         best = f'{max(vals):.2f}' if vals else None
     return best
 
