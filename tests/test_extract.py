@@ -71,6 +71,14 @@ def test_company_skips_phone_like_lines():
     assert find_company(['0123456789', 'GOOD FOOD CAFE']) == 'GOOD FOOD CAFE'
 
 
+def test_bus_ticket_time_is_not_a_total_and_comma_decimal_is_read():
+    # EasyOCR rows from a Punjab Roadways ticket photo: "₹ 55.00" came out as "{55,00"
+    lines = ['ROADWAYS', 'Ferozepur DEPOT', 'No:00000920 24/11/26 10.38.03', 'Tot distance: 37.0 KMs',
+             'FULL: 1x55.0-755,0', '{55,00', 'not TRANSFERABLF']
+    assert find_total(lines) == '55.00'
+    assert find_date(lines) == '24/11/26'
+
+
 if __name__ == '__main__':
     for name, fn in list(globals().items()):
         if name.startswith('test_'):

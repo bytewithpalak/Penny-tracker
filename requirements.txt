@@ -9,3 +9,5 @@ transformers
 fastapi
 uvicorn[standard]
 python-multipart
+sentencepiece
+protobuf

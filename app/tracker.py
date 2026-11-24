@@ -26,7 +26,7 @@ CATEGORIES = ['Food & drink', 'Groceries', 'Transport', 'Health', 'Shopping', 'B
 WORDS = {
     'Food & drink': 'cafe coffee restaurant pizza burger bakery kitchen tea grill food starbucks sandwich juice toast salad dine',
     'Groceries': 'mart supermarket grocery fresh market bazaar vegetables dairy',
-    'Transport': 'uber ola fuel petrol diesel taxi metro bus parking toll railway cab',
+    'Transport': 'uber ola fuel petrol diesel taxi metro bus parking toll railway cab roadways passenger depot fare irctc rapido travels transport',
     'Health': 'pharmacy medical chemist clinic hospital dental medicine',
     'Shopping': 'mall fashion clothing apparel electronics amazon flipkart shoes books gift macbook iphone ipad laptop headphones',
     'Bills': 'electricity water internet broadband mobile recharge rent insurance',

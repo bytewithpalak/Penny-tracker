@@ -10,8 +10,8 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.dates import find_invalid_date
-from app.extract import extract_fields
-from app.ocr import available_engines, get_easyocr, group_rows, run_ocr
+from app.extract import extract_fields, find_company
+from app.ocr import available_engines, default_engine, get_easyocr, get_trocr, group_rows, run_ocr
 from app.preprocess import preprocess
 from app.tracker import current_user, router as tracker_router, smart_category, to_iso
 
@@ -25,9 +25,11 @@ FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend')
 async def lifespan(app):
     if os.getenv('WARMUP', '1') == '1':          # load the model once, not on the first request
         try:
-            get_easyocr()
+            get_easyocr()                         # also TrOCR's text detector
+            if default_engine() == 'trocr':
+                get_trocr()
         except Exception as exc:                  # app still starts; the error shows on first use
-            print(f'EasyOCR warm-up failed: {exc}')
+            print(f'OCR warm-up failed: {exc}')
     yield
 
 
@@ -46,8 +48,9 @@ def engines():
 
 
 @app.post('/api/extract')
-def extract(file: UploadFile = File(...), engine: str = Query('easyocr'),
+def extract(file: UploadFile = File(...), engine: str | None = Query(None),
             binarize: bool = Query(False), preview: bool = Query(True), _uid: int = Depends(current_user)):
+    engine = engine or available_engines()[0]     # TrOCR when it is available, EasyOCR otherwise
     if engine not in available_engines():
         raise HTTPException(400, f'Engine "{engine}" is not available. Choose one of: {available_engines()}')
     if not file.content_type or not file.content_type.startswith('image/'):
@@ -72,6 +75,11 @@ def extract(file: UploadFile = File(...), engine: str = Query('easyocr'),
         ok, buf = cv2.imencode('.jpg', clean, [cv2.IMWRITE_JPEG_QUALITY, 80])
         processed = 'data:image/jpeg;base64,' + base64.b64encode(buf.tobytes()).decode() if ok else None
     fields = extract_fields([r.strip() for r in rows])
+    # The shop name is read only from text the OCR is fairly sure about, so background clutter
+    # (keyboard keys, fingers, table edges) read as low-confidence junk like "JUCU" is not chosen.
+    sure = [l for l in lines if l.get('conf') is None or l['conf'] >= 0.5]
+    if sure:
+        fields['company'] = find_company([r.strip() for r in group_rows(sure)]) or fields['company']
     date_iso = to_iso(fields['date'])
     bad_date = None if date_iso else find_invalid_date([r.strip() for r in rows])
     return {
