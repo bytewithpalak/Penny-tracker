@@ -1,0 +1,20 @@
+{
+	"tesseract": {
+		"receipts": 100,
+		"cer": 0.21948286229705352,
+		"wer": 0.4270042194092827,
+		"company_acc": 0.22,
+		"date_acc": 0.69,
+		"total_acc": 0.46,
+		"seconds_per_receipt": 1.5654889249801636
+	},
+	"easyocr": {
+		"receipts": 100,
+		"cer": 0.2365105671501694,
+		"wer": 0.5828691983122363,
+		"company_acc": 0.21,
+		"date_acc": 0.8,
+		"total_acc": 0.35,
+		"seconds_per_receipt": 12.068851959705352
+	}
+}

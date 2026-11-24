@@ -1,0 +1,11 @@
+{
+  "trocr": {
+    "receipts": 100,
+    "cer": 0.16646378129445757,
+    "wer": 0.2710548523206751,
+    "company_acc": 0.38,
+    "date_acc": 0.92,
+    "total_acc": 0.63,
+    "seconds_per_receipt": 8.185969874858856
+  }
+}
