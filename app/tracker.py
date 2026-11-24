@@ -150,7 +150,7 @@ def _send_code(to, code):
         print(f'\n[DEV] Email sending is not configured. Verification code for {to}: {code}\n', flush=True)
         return False
     msg = EmailMessage()
-    msg['Subject'] = 'Your Penny Petal verification code'
+    msg['Subject'] = 'Your BillBuddy verification code'
     msg['From'] = os.getenv('SMTP_FROM') or os.getenv('SMTP_USER', '')
     msg['To'] = to
     msg.set_content(f'Your verification code is {code}. It expires in 10 minutes.\n\n'
